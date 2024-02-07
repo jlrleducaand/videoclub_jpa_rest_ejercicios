@@ -1,0 +1,19 @@
+
+
+1. la primera linea es la traza de crea la tabla socio con las siguientes columnas:
+   - dni (tipo VARCHAR(9)): representa el DNI del socio y es la clave primaria de esta tabla.
+   - apellidos (tipo VARCHAR(255)): representa los apellidos del socio.
+   - nombre (tipo VARCHAR(255)): representa el nombre del socio.
+   - id_tarjeta (tipo BIGINT): representa el ID de la tarjeta asociada al socio.
+
+2. la segunda linea es Esta consulta crea la tabla tarjeta con las siguientes columnas:
+   - numero (tipo BIGINT, auto_increment): representa el número de la tarjeta y es la clave primaria de esta tabla.
+   - caducidad (tipo DATE): representa la fecha de caducidad de la tarjeta.
+
+3. la tercera linea elimina un índice llamado UK_7a5twu9ps6qob6s1axnyl7adv de la tabla socio.
+
+4. La cuarta linea agrega una restricción única a la columna id_tarjeta de la tabla socio.
+
+5. La última linea agrega una restricción de clave externa o foranea (foreign key) a la tabla socio
+	en la columna id_tarjeta, la cual hace referencia a la columna numero de la tabla tarjeta. 
+	Esta restricción garantiza que cada socio tenga una tarjeta y viceversa relacionado por el codigo.

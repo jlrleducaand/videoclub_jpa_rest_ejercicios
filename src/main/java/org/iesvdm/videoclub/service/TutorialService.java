@@ -1,43 +1,37 @@
-package org.iesvdm.videoclub;
+package org.iesvdm.videoclub.service;
 
-import jakarta.transaction.Transactional;
 import org.iesvdm.videoclub.domain.Comentario;
 import org.iesvdm.videoclub.domain.Tutorial;
+import org.iesvdm.videoclub.repository.ComentarioRepository;
 import org.iesvdm.videoclub.repository.TutorialRepository;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.stereotype.Service;
 
-@SpringBootTest
-class VideoclubApplicationTests {
+@Service
+public class TutorialService {
+
 
     @Autowired
-    TutorialRepository tutorialRepository;
+    private TutorialRepository tutorialRepository;
 
-    @Test
-    void contextLoads() {
-    }
+    @Autowired
+    private ComentarioRepository comentarioRepository;
 
-    @Test
-    @Transactional
-    void pruebaOneToManyTutorial(){
-        var tutorialList = tutorialRepository.findAll();
+    public void crearComentariosParaTutorial(Long tutorialId) {
+        Tutorial tutorial = tutorialRepository.findById(tutorialId).orElseThrow(() -> new RuntimeException("Tutorial no encontrado"));
 
-        Tutorial tutorial = new Tutorial();
         Comentario comentario1 = new Comentario();
-        Comentario comentario2 = new Comentario();
-
-
         comentario1.setTexto("Este es el primer comentario");
         comentario1.setTutorial(tutorial);
 
+        Comentario comentario2 = new Comentario();
         comentario2.setTexto("Este es el segundo comentario");
         comentario2.setTutorial(tutorial);
 
         tutorial.getComentarios().add(comentario1);
         tutorial.getComentarios().add(comentario2);
 
-        tutorialList.forEach(t -> System.out.println(t));
+        tutorialRepository.save(tutorial);
     }
 
 }
