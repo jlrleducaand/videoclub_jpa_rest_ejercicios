@@ -17,18 +17,22 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+@Data
 @Entity
 @Table(name="pelicula")
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Pelicula {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id_pelicula")
-    private long idPelicula;
+    @EqualsAndHashCode.Include
+    private long id;
+
     private String titulo;
+
     private String descripcion;
     @Column(name = "anyo_lanzamiento")
     @JsonFormat(pattern = "yyyy",  shape = JsonFormat.Shape.STRING)
@@ -61,10 +65,26 @@ public class Pelicula {
             name = "pelicula_categoria",
             joinColumns = @JoinColumn(name = "id_pelicula", referencedColumnName = "id_pelicula"),
             inverseJoinColumns = @JoinColumn(name = "id_categoria", referencedColumnName = "id_categoria"))
-    Set<Categoria> categorias = new HashSet<>();
+    private Set<Categoria> categorias = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "pelicula_actor",
+            joinColumns = @JoinColumn(name = "id_pelicula", referencedColumnName = "id_pelicula"),
+            inverseJoinColumns = @JoinColumn(name = "id_actor", referencedColumnName = "id_actor"))
+    private Set<Actor>  actores = new HashSet<>();
+
 
     @Column(name = "ultima_actualizacion")
     @JsonFormat(pattern = "yyyy-MM-dd-HH:mm:ss",  shape = JsonFormat.Shape.STRING)
     private Date ultimaActualizacion;
+
+
+    //Constructor
+    public <E> Pelicula(long id, String titulo, HashSet<Categoria> categorias) {
+        this.id = id;
+        this.titulo = titulo;
+        this.categorias = categorias;
+    }
 
 }
