@@ -36,6 +36,13 @@ public class Tutorial {
     @OneToMany(mappedBy = "tutorial", cascade = CascadeType.ALL)
     private Set<Comentario> comentarios = new HashSet<>();
 
+    //********  Constructor para Tests   ******
+    public Tutorial(int i, String titulo, HashSet<Comentario> comentarios) {
+        this.id = id;
+        this.titulo = titulo;
+        this.comentarios = comentarios;
+        this.fechaPublicacion= new Date();
+    }
 
 
     //*******  Metodos Helper  ********
@@ -53,8 +60,8 @@ public class Tutorial {
         return this;
     }
 
-    // todos los metodos cuando esta LAZY  deben ser anotados con  @Transactional
-    // Si el tipo de Fecht es EAGER  no hará falta
-    // entra en bucle  ya que se llaman en bulcle para que solo de una vuelta @ToString.Exclude en el Padre
+    // Todos los metodos cuando esta LAZY deben ser anotados con @Transactional
+    // Si el tipo de Fecht es EAGER no hará falta
+    // entra en bucle, ya que se llaman en bulcle para que solo de una vuelta @ToString. Exclude en el Padre
 
 }

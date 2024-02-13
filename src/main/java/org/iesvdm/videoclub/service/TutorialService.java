@@ -1,37 +1,55 @@
 package org.iesvdm.videoclub.service;
 
 import org.iesvdm.videoclub.domain.Comentario;
+import org.iesvdm.videoclub.domain.Pelicula;
 import org.iesvdm.videoclub.domain.Tutorial;
+import org.iesvdm.videoclub.exception.TutorialNotFoundException;
 import org.iesvdm.videoclub.repository.ComentarioRepository;
+import org.iesvdm.videoclub.repository.PeliculaRepository;
 import org.iesvdm.videoclub.repository.TutorialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TutorialService {
 
+        private final TutorialRepository tutorialRepository;
 
-    @Autowired
-    private TutorialRepository tutorialRepository;
+        public TutorialService(TutorialRepository tutorialRepository) {
+            this.tutorialRepository = tutorialRepository;
+        }
 
-    @Autowired
-    private ComentarioRepository comentarioRepository;
+        public List<Tutorial> all() {
+            return this.tutorialRepository.findAll();
+        }
 
-    public void crearComentariosParaTutorial(Long tutorialId) {
-        Tutorial tutorial = tutorialRepository.findById(tutorialId).orElseThrow(() -> new RuntimeException("Tutorial no encontrado"));
+        public Tutorial save(Tutorial tutorial) {
+            return this.tutorialRepository.save(tutorial);
+        }
 
-        Comentario comentario1 = new Comentario();
-        comentario1.setTexto("Este es el primer comentario");
-        comentario1.setTutorial(tutorial);
+        public Tutorial one(Long id) {
+            return this.tutorialRepository.findById(id)
+                    .orElseThrow(() -> new TutorialNotFoundException(id));
+        }
 
-        Comentario comentario2 = new Comentario();
-        comentario2.setTexto("Este es el segundo comentario");
-        comentario2.setTutorial(tutorial);
+        public Tutorial replace(Long id, Tutorial tutorial) {
 
-        tutorial.getComentarios().add(comentario1);
-        tutorial.getComentarios().add(comentario2);
+            return this.tutorialRepository.findById(id)
+                    .map( p -> (id.equals(tutorial.getId()) ?
+                            this.tutorialRepository.save(tutorial) : null))
+                    .orElseThrow(() -> new TutorialNotFoundException(id));
 
-        tutorialRepository.save(tutorial);
-    }
+        }
+
+        public void delete(Long id) {
+            this.tutorialRepository.findById(id).map(p -> {
+                        this.tutorialRepository.delete(p);
+                        return p;})
+                    .orElseThrow(() -> new TutorialNotFoundException(id));
+        }
 
 }
+
+
