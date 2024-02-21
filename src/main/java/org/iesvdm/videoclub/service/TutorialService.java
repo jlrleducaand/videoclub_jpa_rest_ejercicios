@@ -1,13 +1,8 @@
 package org.iesvdm.videoclub.service;
 
-import org.iesvdm.videoclub.domain.Comentario;
-import org.iesvdm.videoclub.domain.Pelicula;
 import org.iesvdm.videoclub.domain.Tutorial;
 import org.iesvdm.videoclub.exception.TutorialNotFoundException;
-import org.iesvdm.videoclub.repository.ComentarioRepository;
-import org.iesvdm.videoclub.repository.PeliculaRepository;
 import org.iesvdm.videoclub.repository.TutorialRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

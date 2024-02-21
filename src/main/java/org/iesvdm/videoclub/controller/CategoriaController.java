@@ -1,8 +1,8 @@
 package org.iesvdm.videoclub.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.iesvdm.videoclub.domain.Categoria;
-import org.iesvdm.videoclub.domain.Pelicula;
 import org.iesvdm.videoclub.service.CategoriaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -25,12 +25,12 @@ import java.util.List;
 
         @GetMapping({"","/"})
         public List<Categoria> all() {
-            log.info("Accediendo a todas las categorias");
+            log.info("Accediendo a todas las categorías");
             return this.categoriaService.all();
         }
 
         @PostMapping({"","/"})
-        public Categoria newCategoria(@RequestBody Categoria categoria) {
+        public Categoria newCategoria(@RequestBody @Valid  Categoria categoria) {
             return this.categoriaService.save(categoria);
         }
 
