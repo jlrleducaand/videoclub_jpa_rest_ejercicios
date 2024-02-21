@@ -8,9 +8,7 @@ import org.iesvdm.videoclub.domain.Tutorial;
 import org.iesvdm.videoclub.repository.ComentarioRepository;
 import org.iesvdm.videoclub.repository.TutorialRepository;
 import org.iesvdm.videoclub.util.UtilJPA;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -22,6 +20,7 @@ import java.util.HashSet;
  * TEST ONETOMANY ORPHANREMOVAL, CASCADE.ALL, LAZY
  */
 @SpringBootTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TutorialComentarioTest {
 
     @Autowired
@@ -221,8 +220,8 @@ public class TutorialComentarioTest {
     @Test
     @Order(7)
     public void borrarPorTodoPadre() {
-
-        Tutorial tutorial = tutorialRepository.findById(1L).orElse(null);
+        // borrado por id
+        Tutorial tutorial = tutorialRepository.findById(2L).orElse(null);
         tutorialRepository.delete(tutorial);
 
     }

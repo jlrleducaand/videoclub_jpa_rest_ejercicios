@@ -30,13 +30,22 @@ public class Actor {
     private String nombre;
     private String apellidos;
 
-    @ManyToMany( mappedBy = "actores")
+    @ManyToMany()
     @JsonIgnore
     Set<Pelicula> peliculas = new HashSet<>();
 
     @Column(name = "ultima_actualizacion")
     @JsonFormat(pattern = "yyyy-MM-dd-HH:mm:ss",  shape = JsonFormat.Shape.STRING)
     private Date ultimaActualizacion;
+
+    public Actor(int id, String nombre, HashSet<Pelicula> peliculas) {
+        this.id = id;
+        this.nombre = nombre;
+        this.peliculas = peliculas;
+    }
+
+
+    // ******* CONSTRUCTORES PARA TESTS *********
 
 
 

@@ -33,7 +33,7 @@ public class Tutorial {
 
     // con mappedBY  solo arrastra la clave y crea una FK
     // POR LO QUE NO SE ESTABLECE LA RELACION BIDIRECCIONAL
-    @OneToMany(mappedBy = "tutorial", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "tutorial", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comentario> comentarios = new HashSet<>();
 
     //********  Constructor para Tests   ******

@@ -23,5 +23,4 @@ public class Comentario {
     @ToString.Exclude
     Tutorial tutorial;
 
-
 }

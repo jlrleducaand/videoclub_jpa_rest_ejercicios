@@ -5,10 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -38,8 +35,10 @@ public class Pelicula {
     @JsonFormat(pattern = "yyyy",  shape = JsonFormat.Shape.STRING)
     private Date anyoLanzamiento;
 
-    @ManyToOne()
-    @JoinColumn(name = "id_idioma", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_idioma", nullable = true) //nulable para tests
+    //@JasonBackReference
+    @ToString.Exclude
     private Idioma idioma;
 
     @ManyToOne()
@@ -60,18 +59,34 @@ public class Pelicula {
     @Column(name = "caracteristicas_especiales")
     private String caracteristicasEspeciales;
 
-    @ManyToMany
-    @JoinTable(
+    @ManyToMany(mappedBy = "peliculas", cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+
+    },fetch = FetchType.EAGER )
+/*
+    ****** ESTAS DOS ESTRATEGIAS NO `PUEDEN TRABAJAR JUNTAS  ******
+
+   @JoinTable(
             name = "pelicula_categoria",
             joinColumns = @JoinColumn(name = "id_pelicula", referencedColumnName = "id_pelicula"),
             inverseJoinColumns = @JoinColumn(name = "id_categoria", referencedColumnName = "id_categoria"))
+*/
+
     private Set<Categoria> categorias = new HashSet<>();
 
-    @ManyToMany
+
+    @ManyToMany(mappedBy = "peliculas", cascade = {
+                CascadeType.PERSIST,
+                CascadeType.MERGE
+    },fetch = FetchType.EAGER)
+// ****** ESTAS DOS ESTRATEGIAS NO `PUEDEN TRABAJAR JUNTAS  ******
+    /*
     @JoinTable(
             name = "pelicula_actor",
             joinColumns = @JoinColumn(name = "id_pelicula", referencedColumnName = "id_pelicula"),
-            inverseJoinColumns = @JoinColumn(name = "id_actor", referencedColumnName = "id_actor"))
+          inverseJoinColumns = @JoinColumn(name = "id_actor", referencedColumnName = "id_actor"))
+    */
     private Set<Actor>  actores = new HashSet<>();
 
 
@@ -80,11 +95,43 @@ public class Pelicula {
     private Date ultimaActualizacion;
 
 
-    //Constructor
-    public <E> Pelicula(long id, String titulo, HashSet<Categoria> categorias) {
+    //Constructores `para tests
+    public <E> Pelicula(long id, String titulo, HashSet<Categoria>  categorias) {
         this.id = id;
         this.titulo = titulo;
         this.categorias = categorias;
     }
+    public <E> Pelicula(long id, String titulo, HashSet<Categoria>  categorias, Idioma idioma) {
+        this.id = id;
+        this.titulo = titulo;
+        this.categorias = categorias;
+        this.idioma = idioma;
+    }
 
+    public Pelicula(int id, String titulo, Idioma idioma1) {
+        this.id = id;
+        this.titulo = titulo;
+        this.idioma = idioma;
+    }
+
+    //Constructor Peliculas Categorias
+    public Pelicula(Integer id, String titulo, Idioma idioma, HashSet<Categoria> categoria ) {
+        this.id = id;
+        this.titulo = titulo;
+        this.idioma = idioma;
+        this.categorias = categorias;
+    }
+
+    public <E> Pelicula(Integer integer, String s, HashSet<E> es) {
+        this.id = integer;
+        this.titulo = s;
+        this.categorias = (Set<Categoria>) es;
+    }
+    // PARA ACTOR
+    public Pelicula(int id, String programación, HashSet<Categoria> categorias, HashSet<Actor> actores) {
+     this.id = id;
+     this.titulo = titulo;
+     this.categorias = categorias;
+     this.actores = actores;
+    }
 }

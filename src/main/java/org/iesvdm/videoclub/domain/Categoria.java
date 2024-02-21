@@ -1,7 +1,6 @@
 package org.iesvdm.videoclub.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.Date;
@@ -24,8 +23,11 @@ public class Categoria {
 
     private String nombre;
 
-    @ManyToMany( mappedBy = "categorias")
-    @JsonIgnore
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "pelicula_categoria",
+            joinColumns = @JoinColumn(name = "categoria_id"),
+            inverseJoinColumns = @JoinColumn(name = "pelicula_id")
+    )
     Set<Pelicula> peliculas = new HashSet<>();
 
     @Column(name = "ultima_actualizacion")
@@ -34,7 +36,7 @@ public class Categoria {
 
 
     //Constructor
-    public <E> Categoria(long id, String nombre, HashSet<Pelicula> peliculas) {
+    public  Categoria(long id, String nombre, HashSet<Pelicula> peliculas) {
         this.id = id;
         this.nombre = nombre;
         this.peliculas = peliculas;
