@@ -3,6 +3,7 @@ package org.iesvdm.videoclub.service;
 import org.iesvdm.videoclub.domain.Idioma;
 import org.iesvdm.videoclub.exception.IdiomaNotFoundException;
 import org.iesvdm.videoclub.repository.IdiomaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,9 +13,12 @@ public class IdiomaService {
 
     private final IdiomaRepository idiomaRepository;
 
+    @Autowired
     public IdiomaService(IdiomaRepository idiomaRepository) {
         this.idiomaRepository = idiomaRepository;
     }
+
+
     public List<Idioma> all() {
         return this.idiomaRepository.findAll();
     }

@@ -3,6 +3,7 @@ package org.iesvdm.videoclub.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,7 +13,7 @@ import java.util.Set;
 @Table(name = "categoria")
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)  //solo los que tienen include
 public class Categoria {
 
     @Id
@@ -21,12 +22,13 @@ public class Categoria {
     @EqualsAndHashCode.Include
     private long id;
 
+    //@NaturalId
     private String nombre;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "pelicula_categoria",
-            joinColumns = @JoinColumn(name = "categoria_id"),
-            inverseJoinColumns = @JoinColumn(name = "pelicula_id")
+            joinColumns = @JoinColumn(name = "pelicula_id"),
+            inverseJoinColumns = @JoinColumn(name = "categoria_id")
     )
     Set<Pelicula> peliculas = new HashSet<>();
 
@@ -41,4 +43,13 @@ public class Categoria {
         this.nombre = nombre;
         this.peliculas = peliculas;
     }
+    public  Categoria(long id, String nombre, HashSet<Pelicula> peliculas, Date ultimaActualizacion) {
+        this.id = id;
+        this.nombre = nombre;
+        this.peliculas = peliculas;
+        this.ultimaActualizacion = ultimaActualizacion;
+    }
+
+
+
 }

@@ -3,19 +3,21 @@ package org.iesvdm.videoclub.service;
 import org.iesvdm.videoclub.domain.Actor;
 import org.iesvdm.videoclub.exception.ActorNotFoundException;
 import org.iesvdm.videoclub.repository.ActorRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class ActorService {
-    
+
     private final ActorRepository actorRepository;
 
     public ActorService(ActorRepository actorRepository) {
         this.actorRepository = actorRepository;
     }
 
+    @Autowired
     public List<Actor> all() {
         return this.actorRepository.findAll();
     }

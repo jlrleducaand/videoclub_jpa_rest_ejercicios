@@ -2,10 +2,8 @@ package org.iesvdm.videoclub;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.metamodel.IdentifiableType;
 import org.iesvdm.videoclub.domain.*;
 import org.iesvdm.videoclub.repository.*;
-import org.iesvdm.videoclub.util.UtilJPA;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,8 +12,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -25,7 +21,7 @@ public class PeliculaCategoriaTest {
         PeliculaRepository peliculaRepository;
 
         @Autowired
-        CategoriaRepository categoriaRepository;
+        CategoriaRepositoryDocumentacion categoriaRepository;
 
         @Autowired
         IdiomaRepository idiomaRepository;

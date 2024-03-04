@@ -35,8 +35,14 @@ public class Actor {
     Set<Pelicula> peliculas = new HashSet<>();
 
     @Column(name = "ultima_actualizacion")
-    @JsonFormat(pattern = "yyyy-MM-dd-HH:mm:ss",  shape = JsonFormat.Shape.STRING)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",  shape = JsonFormat.Shape.STRING)
     private Date ultimaActualizacion;
+
+
+
+
+    // ******* CONSTRUCTORES PARA TESTS *********
+
 
     public Actor(int id, String nombre, HashSet<Pelicula> peliculas) {
         this.id = id;
@@ -45,8 +51,12 @@ public class Actor {
     }
 
 
-    // ******* CONSTRUCTORES PARA TESTS *********
-
-
+    public Actor(String nombre, String apellidos,  Date ultimaActualizacion) {
+        this.id = 0;
+        this.apellidos = apellidos;
+        this.nombre = nombre;
+        this.ultimaActualizacion = ultimaActualizacion;
+        this.peliculas = new HashSet<Pelicula>();
+    }
 
 }

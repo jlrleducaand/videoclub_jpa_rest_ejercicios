@@ -4,10 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.apache.commons.lang3.builder.ToStringExclude;
 
 import java.util.Date;
 import java.util.Set;
@@ -18,7 +16,11 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 //Si utilizo @OneToMany(FetchType.LAZY) además debo usar
+//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+// Para evitar que se envíe información de serialización
+// JSON sobre los handler e hibernateLazyInitializer
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Idioma {
 
@@ -33,11 +35,13 @@ public class Idioma {
     private Date ultimaActualizacion;
 
     @OneToMany(mappedBy = "idioma", fetch = FetchType.EAGER)
-    @JsonIgnore
+    @JsonIgnore         //Rompe el lazo de Serializacion
+    @ToStringExclude    //Rompe el lazo de Serializacion
     private Set<Pelicula> peliculasIdioma;
 
     @OneToMany(mappedBy = "idiomaOriginal")
-    @JsonIgnore
+    @JsonIgnore         //Rompe el lazo de Serializacion
+    @ToStringExclude    //Rompe el lazo de Serializacion
     private Set<Pelicula> peliculasIdiomaOriginal;
 
     // ******** CONSTRUCTOR PARA TESTS **************

@@ -1,6 +1,7 @@
 package org.iesvdm.videoclub.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.iesvdm.videoclub.domain.Categoria;
 import org.iesvdm.videoclub.domain.Pelicula;
 import org.iesvdm.videoclub.service.PeliculaService;
 import org.springframework.http.HttpStatus;
@@ -48,6 +49,12 @@ public class PeliculaController {
     public void deletePelicula(@PathVariable("id") Long id) {
         this.peliculaService.delete(id);
     }
+/*
 
+    @PutMapping(value ={"/{idPel}/addcat/{idCat}","/{idPel}/addcat/{idCat}/"})
+    public Pelicula addCategoriaAPelicula(@PathVariable Long idPel, @PathVariable Long idCat) {
+        return this.peliculaService.addCategoriaAPelicula(idPel, idCat);
+    }
+*/
 
 }

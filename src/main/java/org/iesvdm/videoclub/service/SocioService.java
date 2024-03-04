@@ -3,15 +3,18 @@ package org.iesvdm.videoclub.service;
 import org.iesvdm.videoclub.domain.Socio;
 import org.iesvdm.videoclub.exception.SocioNotFoundException;
 import org.iesvdm.videoclub.repository.SocioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class SocioService {
+
     private final SocioRepository socioRepository;
 
-    public SocioService(SocioRepository socioRepository) {
+    @Autowired
+        public SocioService(SocioRepository socioRepository) {
         this.socioRepository = socioRepository;
     }
 

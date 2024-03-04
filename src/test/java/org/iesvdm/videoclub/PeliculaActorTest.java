@@ -7,7 +7,6 @@ import org.iesvdm.videoclub.domain.Actor;
 import org.iesvdm.videoclub.domain.Pelicula;
 import org.iesvdm.videoclub.repository.ActorRepository;
 import org.iesvdm.videoclub.repository.PeliculaRepository;
-import org.iesvdm.videoclub.repository.CategoriaRepository;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,7 @@ import java.util.HashSet;
         PeliculaRepository peliculaRepository;
 
         @Autowired
-        CategoriaRepository categoriaRepository;
+        CategoriaRepositoryDocumentacion categoriaRepository;
 
         @Autowired
         ActorRepository actorRepository;

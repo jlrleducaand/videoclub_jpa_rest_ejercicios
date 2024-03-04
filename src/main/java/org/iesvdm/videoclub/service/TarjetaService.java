@@ -3,6 +3,7 @@ package org.iesvdm.videoclub.service;
 import org.iesvdm.videoclub.domain.Tarjeta;
 import org.iesvdm.videoclub.exception.TarjetaNotFoundException;
 import org.iesvdm.videoclub.repository.TarjetaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,6 +13,7 @@ public class TarjetaService {
 
     private final TarjetaRepository tarjetaRepository;
 
+    @Autowired
     public TarjetaService(TarjetaRepository tarjetaRepository) {
         this.tarjetaRepository = tarjetaRepository;
     }

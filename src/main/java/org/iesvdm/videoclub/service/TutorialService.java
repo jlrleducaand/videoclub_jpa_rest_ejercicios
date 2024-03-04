@@ -3,6 +3,7 @@ package org.iesvdm.videoclub.service;
 import org.iesvdm.videoclub.domain.Tutorial;
 import org.iesvdm.videoclub.exception.TutorialNotFoundException;
 import org.iesvdm.videoclub.repository.TutorialRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,6 +13,7 @@ public class TutorialService {
 
         private final TutorialRepository tutorialRepository;
 
+        @Autowired
         public TutorialService(TutorialRepository tutorialRepository) {
             this.tutorialRepository = tutorialRepository;
         }
