@@ -25,7 +25,6 @@ public class PeliculaService {
     }
 
     public Pelicula save(Pelicula pelicula) {
-
         return this.peliculaRepository.save(pelicula);
     }
 

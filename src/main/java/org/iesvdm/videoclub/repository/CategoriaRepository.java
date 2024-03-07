@@ -1,6 +1,8 @@
 package org.iesvdm.videoclub.repository;
 
 import org.iesvdm.videoclub.domain.Categoria;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,4 +26,13 @@ public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
     // Método auxiliar para consulta SQL nativa
     @Query(nativeQuery = true, value = "SELECT * FROM Categoria WHERE nombre LIKE CONCAT('%', :nombre, '%')")
     List<Categoria> queryCategoriaCustomJPA(String nombre);
+
+
+    public List<Categoria> findAll();
+
+    public List<Categoria> findByNombreContainsIgnoreCaseOrderByNombreAsc(String nombre);
+
+    public List<Categoria> findByNombreContainsIgnoreCaseOrderByNombreDesc(String nombre);
+
+
 }

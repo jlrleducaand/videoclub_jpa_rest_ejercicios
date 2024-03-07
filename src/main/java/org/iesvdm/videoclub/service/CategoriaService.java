@@ -4,39 +4,51 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.iesvdm.videoclub.domain.Categoria;
 import org.iesvdm.videoclub.domain.Pelicula;
-import org.iesvdm.videoclub.dto.CategoriaDtoRepository;
+import org.iesvdm.videoclub.dto.CategoriaDTO;
 import org.iesvdm.videoclub.exception.CategoriaNotFoundException;
 import org.iesvdm.videoclub.repository.*;
+import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+@Slf4j
 @Service
-public class CategoriaService implements CategoriaDtoRepository{
+public class CategoriaService  {
 
     private final CategoriaRepository categoriaRepository;
-    private final PeliculaService peliculaRepository;
+    private final PeliculaService peliculaService;
 
 
+    // para las consultas dinamicas  8 en una  logica de control para multiconsultas
     @PersistenceContext
     EntityManager em;
 
 
+
     @Autowired
     public CategoriaService(CategoriaRepository categoriaRepository
-                            , PeliculaService peliculaRepository){
+                            , PeliculaService peliculaService){
 
         this.categoriaRepository = categoriaRepository;
-        this.peliculaRepository = peliculaRepository;
+        this.peliculaService = peliculaService;
     }
 
-    public List<Categoria> all() {
 
+    public List<Categoria> all() {
         return this.categoriaRepository.findAll();
+    }
+
+    public Page<Categoria> getAll(Pageable pageable) {
+        return this.categoriaRepository.findAll(pageable);
     }
 
     @Transactional
@@ -53,21 +65,33 @@ public class CategoriaService implements CategoriaDtoRepository{
     }
 
     public Categoria replace(Long id, Categoria categoria) {
-        return this.categoriaRepository.findById(id).map( p -> (id.equals(categoria.getId())  ?
+        return this.categoriaRepository.findById(id).map( c -> (id.equals(categoria.getId())  ?
                         this.categoriaRepository.save(categoria) : null))
                 .orElseThrow(() -> new CategoriaNotFoundException(id));
     }
 
     public void delete(Long id) {
-        this.categoriaRepository.findById(id).map(p -> {this.categoriaRepository.delete(p);
-                    return p;})
+        log.info("Eliminando la categoría con ID: " + id);
+        Categoria cat = this.categoriaRepository.findById(id)
+                .orElseThrow(() -> new CategoriaNotFoundException(id));
+
+        Set<Pelicula> peliculas = cat.getPeliculas();
+        // Eliminar las películas asociadas una por una
+        for (Pelicula pelicula : peliculas) {
+            peliculaService.delete(pelicula.getId());
+        }
+
+        this.categoriaRepository.findById(id).map(c -> {
+
+            this.categoriaRepository.delete(c);
+                    return c;})
                 .orElseThrow(() -> new CategoriaNotFoundException(id));
     }
 
     // ******************   CALCULOS SOBRE LA BASE DE DATOS     ******************
 
     public Categoria addPeliculaACategoria(Long idPel, Long idCat){
-        Pelicula p = peliculaRepository.one(idPel);
+        Pelicula p = peliculaService.one(idPel);
         Categoria c = one(idCat);
         if(!this.one(idCat).getPeliculas().contains(p)){
             c.getPeliculas().add(p);
@@ -75,6 +99,31 @@ public class CategoriaService implements CategoriaDtoRepository{
         }
 
         return c;
+    }
+    public int numPeliculasPorCategoria(Long id) {
+        Categoria cat = one(id);
+        int cont = cat.getPeliculas().size();
+        if  (cont > 0) {
+               cat.setNumPelis(cont);
+            }else{
+                cat.setNumPelis(0);
+                cont = 0;
+            }
+        return cont;
+        }
+
+
+    public void PeliculasPorCategorias() {
+        List<Categoria> cats = categoriaRepository.findAll();
+        int cont = 0;
+        for (Categoria cat : cats) {
+            cont = (cat.getPeliculas().size());
+            if (cont >0) {
+                cat.setNumPelis(cont);
+            }else{
+                cat.setNumPelis(0);
+            }
+        }
     }
 
 
@@ -84,18 +133,18 @@ public class CategoriaService implements CategoriaDtoRepository{
     //Notación para asociar peticiones JPQL o SQL a un método pasando parámetros por orden de entrada
     // de la firma del método o parametrizados con nombre
     public List<Categoria> queryCategoriaCustomJPQL(Optional<String> buscarOptional, Optional<String>  ordenarOptional) {
-        StringBuilder queryBuilder = new StringBuilder("select C from categoria");
+        String queryBodyString = "select C from Categoria as C";  //cuerpo repetitivo
         if (buscarOptional.isPresent()){
-            queryBuilder.append(" ").append("where C.nombre like: nombre");
+            queryBodyString += " where C.nombre like :nombre";
         }
         if (ordenarOptional.isPresent()){
             if(buscarOptional.isPresent() && "asc".equalsIgnoreCase(buscarOptional.get())){
-                queryBuilder.append(" ").append("order by C.nombre ASC");
+                queryBodyString += " order by C.nombre ASC";
             }else if(buscarOptional.isPresent() && "desc".equalsIgnoreCase(buscarOptional.get())) {
-                queryBuilder.append(" ").append("order by C.nombre desc");
+                queryBodyString += " order by C.nombre desc";
             }
         }
-        Query query = em.createQuery(queryBuilder.toString());
+        Query query = em.createQuery(queryBodyString.toString());
         if (buscarOptional.isPresent()){
             query.setParameter("nombre", "%"+buscarOptional.get()+"%");
         }
@@ -108,18 +157,18 @@ public class CategoriaService implements CategoriaDtoRepository{
     //@Query nativeQuery = true, es decir, SQL:
     // Se Parametrizan con el nombre del parámetro:  (%:nombre%)
     public List<Categoria> queryCategoriaCustomJPA(Optional<String> buscarOptional,Optional<String>  ordenarOptional ) {
-        StringBuilder queryBuilder = new StringBuilder("select * from categoria");
+        String queryBodyString = "select * from categoria";
         if (buscarOptional.isPresent()){
-            queryBuilder.append(" ").append("where nombre like: nombre");
+            queryBodyString += "where nombre like :nombre";
         }
         if (ordenarOptional.isPresent()){
             if(buscarOptional.isPresent() && "asc".equalsIgnoreCase(buscarOptional.get())){
-                queryBuilder.append(" ").append("order by nombre ASC");
+                queryBodyString += "order by nombre ASC";
             }else if(buscarOptional.isPresent() && "desc".equalsIgnoreCase(buscarOptional.get())) {
-                queryBuilder.append(" ").append("order by nombre desc");
+                queryBodyString += "order by nombre desc";
             }
         }
-        Query query = em.createNativeQuery(queryBuilder.toString(),Categoria.class);
+        Query query = em.createNativeQuery(queryBodyString.toString(),Categoria.class);
         if (buscarOptional.isPresent()){
             query.setParameter("nombre", "%"+buscarOptional.get()+"%");
         }
@@ -127,9 +176,16 @@ public class CategoriaService implements CategoriaDtoRepository{
         return query.getResultList();
     }
 
-    @Override
-    public int numPeliculasPorCategoria(Long idCat) {
-        return this.one(idCat).getPeliculas().size();
+    //Bloque con Query de JPA auto
+    public List<Categoria> findByNombreContainsIgnoreCaseOrderByNombre(String nombre, String orden){
+        List<Categoria> lista = null;
+        if(orden.equalsIgnoreCase("asc")){
+            lista = categoriaRepository.findByNombreContainsIgnoreCaseOrderByNombreAsc(nombre);
+
+        }else if(orden.equalsIgnoreCase("desc")){
+            lista = categoriaRepository.findByNombreContainsIgnoreCaseOrderByNombreDesc(nombre);
+        }
+        return lista;
     }
 
 
@@ -145,8 +201,6 @@ public class CategoriaService implements CategoriaDtoRepository{
                 .collect(Collectors.toList());
     }
 
-
-
     private CategoriaDTO convertToCategoriaDTO(Categoria categoria) {
         CategoriaDTO categoriaDTO = new CategoriaDTO();
         categoriaDTO.setId(categoria.getId());
@@ -159,4 +213,6 @@ public class CategoriaService implements CategoriaDtoRepository{
         return this.categoriaDTORepository.findById(id)
                 .orElseThrow(() -> new CategoriaDTONotFoundException(id));
     }*/
+
+
 }

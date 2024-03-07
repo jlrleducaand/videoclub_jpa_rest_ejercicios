@@ -50,11 +50,15 @@ export class CategoriaService {
   }
 
   delete(id: number){
-    return this.httpClient.delete<Categoria>(this.apiURL + id, this.httpOptions)
+    return this.httpClient.delete<Categoria>(`${this.apiURL}/${id}`,  this.httpOptions)
+
       .pipe(
         catchError(this.errorHandler)
       )
   }
+
+
+
 
   errorHandler(error: any) {
 

@@ -3,6 +3,7 @@ package org.iesvdm.videoclub.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
+import org.iesvdm.videoclub.service.CategoriaService;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -23,6 +24,7 @@ public class Categoria {
     private long id;
 
     //@NaturalId
+    @EqualsAndHashCode.Include
     private String nombre;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -33,9 +35,12 @@ public class Categoria {
     Set<Pelicula> peliculas = new HashSet<>();
 
     @Column(name = "ultima_actualizacion")
-    @JsonFormat(pattern = "yyyy-MM-dd-HH:mm:ss",  shape = JsonFormat.Shape.STRING)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",  shape = JsonFormat.Shape.STRING)
     private Date ultimaActualizacion;
 
+    //Campo del que no queremos que se haga columna en la tabla
+    @Transient
+    private int numPelis;
 
     //Constructor
     public  Categoria(long id, String nombre, HashSet<Pelicula> peliculas) {
@@ -48,7 +53,8 @@ public class Categoria {
         this.nombre = nombre;
         this.peliculas = peliculas;
         this.ultimaActualizacion = ultimaActualizacion;
-    }
+
+          }
 
 
 

@@ -29,14 +29,17 @@ import java.util.Set;
         private Set<Categoria>  categorias;
         private int numCategorias;
 
+       /*
+       @Transient
         private int numCatPorPelicula;
+        */
 
     public PeliculaDTO(Long id, String titulo, HashSet<Categoria> categorias) {
         this.id = id;
         this.titulo = titulo;
         this.categorias = categorias;
 
-        this.numCatPorPelicula = getCategorias().size();
+        //this.numCatPorPelicula = getCategorias().size();
     }
 }
 
