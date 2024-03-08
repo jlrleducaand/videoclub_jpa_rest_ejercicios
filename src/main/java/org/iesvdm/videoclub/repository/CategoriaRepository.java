@@ -34,5 +34,11 @@ public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
 
     public List<Categoria> findByNombreContainsIgnoreCaseOrderByNombreDesc(String nombre);
 
+    public List<Categoria> findByNombreContainsIgnoreCase(String nombre);
+
+    public Page<Categoria> findByNombreContainsIgnoreCase(String nombre, Pageable pageable);
+
+    public Page<Categoria> findAll(Pageable pageable);
+
 
 }

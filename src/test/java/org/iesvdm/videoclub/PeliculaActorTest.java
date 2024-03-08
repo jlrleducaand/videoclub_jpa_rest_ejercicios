@@ -6,6 +6,7 @@ import org.iesvdm.videoclub.domain.Categoria;
 import org.iesvdm.videoclub.domain.Actor;
 import org.iesvdm.videoclub.domain.Pelicula;
 import org.iesvdm.videoclub.repository.ActorRepository;
+import org.iesvdm.videoclub.repository.CategoriaRepository;
 import org.iesvdm.videoclub.repository.PeliculaRepository;
 
 import org.junit.jupiter.api.*;
@@ -26,10 +27,10 @@ import java.util.HashSet;
         PeliculaRepository peliculaRepository;
 
         @Autowired
-        CategoriaRepositoryDocumentacion categoriaRepository;
+        ActorRepository actorRepository;
 
         @Autowired
-        ActorRepository actorRepository;
+        CategoriaRepository categoriaRepository;
 
         @PersistenceContext
         EntityManager entityManager;

@@ -42,7 +42,7 @@ public class Categoria {
     @Transient
     private int numPelis;
 
-    //Constructor
+    //Constructores para los tests
     public  Categoria(long id, String nombre, HashSet<Pelicula> peliculas) {
         this.id = id;
         this.nombre = nombre;

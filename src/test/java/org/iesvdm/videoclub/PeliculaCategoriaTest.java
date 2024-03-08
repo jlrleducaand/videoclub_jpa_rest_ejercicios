@@ -21,10 +21,10 @@ public class PeliculaCategoriaTest {
         PeliculaRepository peliculaRepository;
 
         @Autowired
-        CategoriaRepositoryDocumentacion categoriaRepository;
+        IdiomaRepository idiomaRepository;
 
         @Autowired
-        IdiomaRepository idiomaRepository;
+        CategoriaRepository categoriaRepository;
 
         @PersistenceContext
         EntityManager entityManager;

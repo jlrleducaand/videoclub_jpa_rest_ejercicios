@@ -12,13 +12,13 @@ import org.iesvdm.videoclub.exception.CategoriaNotFoundException;
 import org.iesvdm.videoclub.repository.*;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -48,8 +48,84 @@ public class CategoriaService  {
     }
 
     public Page<Categoria> getAll(Pageable pageable) {
-        return this.categoriaRepository.findAll(pageable);
+        Page<Categoria> pageCat = this.categoriaRepository.findAll(pageable);
+
+        return pageCat;
     }
+   /* public Page<Categoria> all46(Pageable pageable, Optional<String> columnOptional, Optional<String> sortOptional) {
+            pageable.getSort()
+
+            }
+        }
+        Page<Categoria> pageCat = this.categoriaRepository.findAll(pageable);
+
+    }*/
+
+    // AUTOMATICA PARA DOS CAMPOS CON DIFERENTES DEVOLUCIONES PAGE Y LIST
+    public Page<Categoria> getAllBuscar(String buscar, Pageable pageable) {
+        return this.categoriaRepository.findByNombreContainsIgnoreCase(buscar, pageable);
+    }
+
+    public Map<String, Object> procesarOrden(String campo, String direccion) {
+
+        Pageable pageable = (direccion.equals("desc")) ?
+                PageRequest.of(0, 20, Sort.by(campo).descending()) :
+                PageRequest.of(0, 20, Sort.by(campo).ascending());
+
+        Page<Categoria> pageAll = this.categoriaRepository.findAll(pageable);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("categorias",pageAll.getContent());
+        response.put("currentPage",pageAll.getNumber());
+        response.put("totalItems",pageAll.getTotalElements());
+        response.put("totalPages",pageAll.getTotalPages());
+
+        return response;
+    }
+    public Map<String, Object> procesarOrden2(String campo1, String direccion1, String campo2, String direccion2) {
+
+        Sort sort = Sort.by(
+                Sort.Order.by(campo1).with(
+                        direccion1.equals("desc") ? Sort.Direction.DESC : Sort.Direction.ASC
+                ),
+                Sort.Order.by(campo2).with(
+                        direccion2.equals("desc") ? Sort.Direction.DESC : Sort.Direction.ASC
+                )
+        );
+
+        Pageable pageable = PageRequest.of(0, 20,sort);
+
+
+        Page<Categoria> pageAll = this.categoriaRepository.findAll(pageable);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("categorias",pageAll.getContent());
+        response.put("currentPage",pageAll.getNumber());
+        response.put("totalItems",pageAll.getTotalElements());
+        response.put("totalPages",pageAll.getTotalPages());
+
+
+        return response;
+    }
+
+    // MANUAL PARA DOS CAMPOS CON DIFERENTES DEVOLUCIONES PAGE Y LIST
+    /*public Page<Categoria> getAllBuscar( String buscar, Pageable pageable) {
+        Page<Categoria> pageCat = this.categoriaRepository.findAll(pageable);
+        List<Categoria> listCat = this.categoriaRepository.findByNombreContainsIgnoreCase(buscar);
+
+        // Concatenar las dos listas en un Set
+        Set<Categoria> mergedSet = Stream.concat(pageCat.getContent().stream(), listCat.stream())
+                .collect(Collectors.toSet());
+
+        // Convertir el HashSet en una lista nuevamente
+        List<Categoria> mergedList = mergedSet.stream().collect(Collectors.toList());
+
+
+        // Crear un nuevo objeto Page a partir de la lista combinada
+        Page<Categoria> mergedPage = new PageImpl<>(mergedList, pageable, mergedList.size());
+
+        return mergedPage;
+    }*/
 
     @Transactional
     public Categoria save(Categoria categoria) {
@@ -96,6 +172,7 @@ public class CategoriaService  {
         if(!this.one(idCat).getPeliculas().contains(p)){
             c.getPeliculas().add(p);
             save(c);
+            peliculasPorCategorias();
         }
 
         return c;
@@ -113,7 +190,7 @@ public class CategoriaService  {
         }
 
 
-    public void PeliculasPorCategorias() {
+    public void peliculasPorCategorias() {
         List<Categoria> cats = categoriaRepository.findAll();
         int cont = 0;
         for (Categoria cat : cats) {
@@ -187,6 +264,14 @@ public class CategoriaService  {
         }
         return lista;
     }
+
+    public List<Categoria> findByNombreContainsIgnoreCase(String nombre){
+        List<Categoria> lista = null;
+        return categoriaRepository.findByNombreContainsIgnoreCase(nombre);
+
+    }
+
+
 
 
 
