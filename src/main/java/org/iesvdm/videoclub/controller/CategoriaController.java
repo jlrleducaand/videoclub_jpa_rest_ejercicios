@@ -85,11 +85,9 @@ import java.util.*;
             @RequestParam(value = "orden", required = false, defaultValue = "id, asc" ) String[] orden
     ){
         log.info("Orden recibido en el controlador orden1 y orden2:" + orden);
-
         Map<String, Object> responseAll = null;
         String[] ordenSplited_0 = orden[0].split(",");
         String[] ordenSplited_1 = orden[1].split(",");
-
 // Calcular la longitud total del nuevo array
         int totalLength = ordenSplited_0.length + ordenSplited_1.length;
 // Crear un nuevo array con la longitud total
@@ -98,33 +96,26 @@ import java.util.*;
         System.arraycopy(ordenSplited_0, 0, ordenSplitedRes, 0, ordenSplited_0.length);
 // Copiar los elementos del segundo array
         System.arraycopy(ordenSplited_1, 0, ordenSplitedRes, ordenSplited_0.length, ordenSplited_1.length);
-
-
         // Verificar si se recibió una ordenación de dos niveles (campo, sentido, campo2, sentido2)
         if (ordenSplitedRes.length == 4) {
             log.info("Orden:" + orden);
             log.info("Orden recibido en el controlador dos orden:" + Arrays.toString(orden)+ ordenSplitedRes.length);
-
             String campo1 = ordenSplitedRes[0];
             String sentido1 = ordenSplitedRes[1];
             String campo2 = ordenSplitedRes[2];
             String sentido2 = ordenSplitedRes[3];
             responseAll = categoriaService.procesarOrden2(campo1, sentido1, campo2, sentido2);
-
             return ResponseEntity.ok(responseAll);
 
             // Verificar si se recibió una ordenación de un nivel (campo1, sentido1)
         }else if (ordenSplitedRes.length == 2){
             log.info("Orden:" + orden);
             log.info("Orden recibido en el controlador un orden:" + Arrays.toString(ordenSplitedRes) + ordenSplitedRes.length);
-
             String campo1 = ordenSplitedRes[0];
             String sentido1 = ordenSplitedRes[1];
             responseAll = categoriaService.procesarOrden(campo1, sentido1);
-
             return ResponseEntity.ok(responseAll);
         }
-
         // Manejar caso de error o formato incorrecto de la solicitud
         else {
             return ResponseEntity.badRequest().build();

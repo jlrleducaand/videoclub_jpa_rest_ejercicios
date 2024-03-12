@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {  Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { Categoria } from './categoria';
+import { Categoria } from './categoria';  //Importa la interface
 
 @Injectable({
   providedIn: 'root'
